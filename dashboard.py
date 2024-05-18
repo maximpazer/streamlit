@@ -7,7 +7,7 @@ from spezien_eigenschaften import calculate_metrics
 from map import create_map
 from length_weight_3years import fig_gewichte,fig_laengen
 from age_sex_3years import create_ratio_chart,fig_salt_water_age
-from salmon.submission.map import create_map
+from map import create_map
 from fangarten import create_sunburst_chart
 from lachsarten import create_pie_chart
 
