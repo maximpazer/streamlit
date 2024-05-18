@@ -25,76 +25,81 @@ def load_data():
     return df
 df = load_data()
 
+species_order = ["chinook", "chum", "coho", "pink", "sockeye"]
+
+# Sidebar 
+sidebar_species = st.sidebar.selectbox('Select a species (sidebar)', ['All species'] + species_order)
+if sidebar_species == 'All species':
+    st.session_state.selected_species = None
+else:
+    st.session_state.selected_species = sidebar_species
+selected_species = st.session_state.selected_species
+    
+values = st.sidebar.slider('Select a range of years (sidebar)', 1960, 2016, (1960, 2016))
+min_value = int(values[0])
+max_value = int(values[1])
+
 st.markdown("<h1 style='text-align: center; color: #FFFFF; font-size: 42px;'>A L A S K A:</h1> <h2 style='text-align: center';> eine bedrohte Lachspopulation? </h2>", unsafe_allow_html=True)
+
+
 st.divider()
 
-col1,col2 = st.columns(2,gap="large")
-with col1:
+
+# Display the images
+if st.session_state.selected_species is None:
+    # Display all images
     st.header("Der Lachs")
     st.info("""
-**Über den Lachs:**
-Lachse sind faszinierende Wanderfische, die für ihre epischen Wanderungen von Meeresgewässern zu ihren Laichgründen in den Flüssen bekannt sind. 
+        **Über den Lachs:**
+        Lachse sind faszinierende Wanderfische, die für ihre epischen Wanderungen von Meeresgewässern zu ihren Laichgründen in den Flüssen bekannt sind. 
 
-**Die Herausforderungen für den Lachs:**
-Besonders in Alaska sind die Daten über Lachse von entscheidender Bedeutung. Die Region beherbergt einige der letzten intakten Lachslebensräume, was sie zu einem wichtigen Schauplatz für die Erhaltung von Lachsbeständen macht.
+        **Die Herausforderungen für den Lachs:**
+        Besonders in Alaska sind die Daten über Lachse von entscheidender Bedeutung. Die Region beherbergt einige der letzten intakten Lachslebensräume, was sie zu einem wichtigen Schauplatz für die Erhaltung von Lachsbeständen macht.
 
-**Ziel des Dashboards:**
-Dieses Dashboard zielt darauf ab, die Entwicklung der Lachspopulationen aufzuzeigen. Es bietet Einblicke in die verschiedenen Metriken, die für das Verständnis der Trends der Lachspopulationen in Alaska wichtig sind.
-""")
-with col2:
-    st.header("Lachsarten ")
+        **Ziel des Dashboards:**
+        Dieses Dashboard zielt darauf ab, die Entwicklung der Lachspopulationen aufzuzeigen. Es bietet Einblicke in die verschiedenen Metriken, die für das Verständnis der Trends der Lachspopulationen in Alaska wichtig sind.
+        """)
     col3,col4,col5,col6,col7 = st.columns(5)
+
     with col3:
         st.image("https://upload.wikimedia.org/wikipedia/commons/d/d8/Chinook_Salmon_Adult_Male.jpg", "Chinook")
-
     with col4:
         st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Dog_Salmon_Breeding_Male.jpg", "Chum")
-
     with col5:
         st.image("https://s3.animalia.bio/animals/photos/full/original/coho-salmon-adult-male.webp","Coho")
-
     with col6:
         st.image("https://upload.wikimedia.org/wikipedia/commons/c/c2/Humpback_Salmon_Adult_Male.jpg", "Pink")
     with col7:
         st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Oncorhynchus_nerka.jpg/300px-Oncorhynchus_nerka.jpg","Sockeye")
+else:
+    # Create two columns
+    st.header("Der Lachs")
 
-    # Button --> all species
-    if "all_button_clicked" not in st.session_state:
-        st.session_state.all_button_clicked = False
-    if st.button("All",use_container_width=True):
-        st.session_state.all_button_clicked = True
+    col1, col2 = st.columns(2, gap="large")
+    # Display the text in the left column
+    with col1:
+        st.info("""
+        **Über den Lachs:**
+        Lachse sind faszinierende Wanderfische, die für ihre epischen Wanderungen von Meeresgewässern zu ihren Laichgründen in den Flüssen bekannt sind. 
 
-    # Slider --> species selection
-    species_order = ["chinook", "chum", "coho", "pink", "sockeye"]
-    selected_species = st.select_slider("Select a species", options=species_order)
+        **Die Herausforderungen für den Lachs:**
+        Besonders in Alaska sind die Daten über Lachse von entscheidender Bedeutung. Die Region beherbergt einige der letzten intakten Lachslebensräume, was sie zu einem wichtigen Schauplatz für die Erhaltung von Lachsbeständen macht.
 
-    if selected_species != st.session_state.get("selected_species", None):
-        st.session_state.all_button_clicked = False
-        st.session_state.selected_species = selected_species
+        **Ziel des Dashboards:**
+        Dieses Dashboard zielt darauf ab, die Entwicklung der Lachspopulationen aufzuzeigen. Es bietet Einblicke in die verschiedenen Metriken, die für das Verständnis der Trends der Lachspopulationen in Alaska wichtig sind.
+        """)
 
-    if st.session_state.all_button_clicked:
-        selected_species = None
-
-    species_images = {
-    "chinook": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Chinook_Salmon_Adult_Male.jpg",
-    "chum": "https://upload.wikimedia.org/wikipedia/commons/7/71/Dog_Salmon_Breeding_Male.jpg",
-    "coho": "https://s3.animalia.bio/animals/photos/full/original/coho-salmon-adult-male.webp",
-    "pink": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Humpback_Salmon_Adult_Male.jpg",
-    "sockeye": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Oncorhynchus_nerka.jpg/300px-Oncorhynchus_nerka.jpg",
-    "all": "https://i0.wp.com/kenrand.co/wp-content/uploads/2019/03/pac-sam-species_titlecrop.gif?resize=920%2C431",
-    }
-
-
+    # Display the selected image in the right column
+    selected_image = {
+        "chinook": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Chinook_Salmon_Adult_Male.jpg",
+        "chum": "https://upload.wikimedia.org/wikipedia/commons/7/71/Dog_Salmon_Breeding_Male.jpg",
+        "coho": "https://s3.animalia.bio/animals/photos/full/original/coho-salmon-adult-male.webp",
+        "pink": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Humpback_Salmon_Adult_Male.jpg",
+        "sockeye": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Oncorhynchus_nerka.jpg/300px-Oncorhynchus_nerka.jpg",
+    }[st.session_state.selected_species]
+    with col2:
+        st.image(selected_image, width = 500, caption=st.session_state.selected_species.capitalize() + " Salmon", use_column_width=False)
 st.divider()
-
-# Sidebar 
-selected_species = st.sidebar.selectbox('Select a species (sidebar)', ['All species'] + list(df['Species'].unique()))
-if selected_species == 'All species':
-    selected_species = None
-
-values = st.sidebar.slider('Select a range of years (sidebar)', 1960, 2016, (1960, 2016))
-min_value = int(values[0])
-max_value = int(values[1])
 
 # Df filtern nach Jahr
 df_filtered = df[(df['sampleYear'] >= min_value) & (df['sampleYear'] <= max_value)]
@@ -156,6 +161,22 @@ with col1:
     top_gears = df['Gear'].value_counts().index[:7]
     selected_gear = st.selectbox('Wählen Sie eine Fangart aus:', top_gears)
 
+    
+# pie chart --> Lachsarten
+with col2:
+    st.header("Verteilung der Lachsarten")
+    fig = create_pie_chart(df, values)
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.info("""
+    Lachse spielen eine zentrale Rolle im Leben der Bären, insbesondere der Braunbären. Diese Fische wandern jährlich von den Ozeanen zu ihren Geburtsflüssen, um dort zu laichen. Dieser Prozess, der als Lachswanderung bekannt ist, bietet den Bären eine reichhaltige Nahrungsquelle. Während der Lachswanderung, die meist im Sommer und Frühherbst stattfindet, versammeln sich Bären an Flüssen und Wasserfällen, um die Lachse zu fangen.
+    """)
+
+    
+st.divider()
+col1, col2 = st.columns(2)
+with col1:
+
     fangarten_bilder = {
     "fishwheel": "https://www.researchgate.net/publication/261175674/figure/fig12/AS:296830626746380@1447781345025/Salmon-fish-wheel-Chilkat-River-Alaska-August-7-2007-Credit-Keith-Criddle.png",
     "gillnet": "https://i.ytimg.com/vi/Hs2atBRSOtY/maxresdefault.jpg",
@@ -167,17 +188,10 @@ with col1:
     "troll": "https://fishingbooker-prod-blog-backup.s3.amazonaws.com/blog/media/2021/12/14142343/Trolling-rods-2-edited.jpg"
 
 }
-    
-# pie chart --> Lachsarten
-with col2:
-    st.header("Verteilung der Lachsarten")
-    fig = create_pie_chart(df,values)
-    st.plotly_chart(fig, use_container_width=True)
+    if selected_gear in fangarten_bilder:
+        st.image(fangarten_bilder[selected_gear],use_column_width=True,caption="Beispielbild für die Fangart: {}".format(selected_gear),width=800)
 
-# Bild der Fangarten
-if selected_gear in fangarten_bilder:
-        st.image(fangarten_bilder[selected_gear],use_column_width=True)
-else:
+    else:
         st.write("Kein Bild für diese Fangart verfügbar.")
-
-
+with col2:
+    st.image("https://katmailand.com/wp-content/uploads/2023/10/iStock-13307448314-1024x568.jpg")
